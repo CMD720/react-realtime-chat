@@ -1,27 +1,29 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Context} from "../context/Context";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {Avatar, Button, Container, Grid, TextField} from "@mui/material";
 import {useCollectionData} from "react-firebase-hooks/firestore";
 import Loader from "./Loader";
-import {collection, addDoc, getDocs, serverTimestamp, doc, onSnapshot} from "firebase/firestore";
+import {addDoc, collection, serverTimestamp} from "firebase/firestore";
 
 
 const Chat = () => {
     const {auth, firestore} = useContext(Context)
     const [user] = useAuthState(auth)
     const [value, setValue] = useState('')
+    const lastMessage = useRef(null)
 
     const [messages, loading] = useCollectionData(
         collection(firestore, "messages")
-        // .orderBy('createdAt')
     )
 
-    // const q = query(collection(firestore, "messages"), orderBy('createdAt'))
-
+    useEffect(()=>{
+        if (!loading) {
+            lastMessage.current.scrollIntoView(false)
+        }
+    },[messages])
 
     const sendMessage = async () => {
-        // async function sendMessage (){
         try {
             await addDoc(collection(firestore, "messages"), {
                 uid: user.uid,
@@ -53,8 +55,7 @@ const Chat = () => {
                                 {user.uid === message.uid ? <div></div> :
                                     <Avatar style={{marginLeft: 10}} src={message.photoURL}/>}
 
-                                <div key={message.createdAt}
-                                     style={{
+                                <div style={{
                                          margin: 10,
                                          borderRadius: '10px',
                                          padding: 5,
@@ -63,13 +64,15 @@ const Chat = () => {
                                          width: 'fit-content'
                                      }}>
                                     <Grid container={true}>
-                                        <div
-                                            style={{marginRight: 10}}>{user.uid === message.uid ? '' : message.displayName + ' :'}</div>
+                                        <div style={{marginRight: 10}}>
+                                            {user.uid === message.uid ? '' : message.displayName + ' :'}
+                                        </div>
                                     </Grid>
-                                    <div>{message.text}</div>
+                                    <div /*ref={lastMessage}*/>{message.text}</div>
                                 </div>
                             </Grid>
                         )}
+                    <div ref={lastMessage}></div>
                 </div>
                 <Grid
                     container

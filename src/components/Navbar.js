@@ -9,7 +9,6 @@ import "../App.css"
 const Navbar = () => {
     const {auth} = useContext(Context)
     const [user] = useAuthState(auth)
-    // console.log(auth);
     return (
         <AppBar  position="static">
             <Toolbar variant={"dense"}>

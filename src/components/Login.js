@@ -5,13 +5,10 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
     const {auth} = useContext(Context)
-    // console.log('auth', auth);
 
     const login = async() => {
-        // const provider = new auth.GoogleAuthProvider()
         const provider = new GoogleAuthProvider()
         const {user} = await signInWithPopup(auth, provider)
-        // console.log('user', user);
     }
 
     return (
@@ -25,7 +22,6 @@ const Login = () => {
                       container
                       alignItems={"center"}
                       direction={"column"}
-                      // justifyContent={"center"}
                 >
                     <Box p={5}>
                         <Button onClick={login} variant={"outlined"}>Login whit Google</Button>
